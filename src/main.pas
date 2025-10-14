@@ -5,8 +5,8 @@ Program Main;
 
 Const 
   MAX_CITIES = 10;
-  SCREEN_WIDTH = 35;
-  SCREEN_HEIGHT = 20;
+  SCREEN_WIDTH = 38;
+  SCREEN_HEIGHT = 22;
 
 Var 
   city_x: array[0..MAX_CITIES-1] Of BYTE;
@@ -14,15 +14,43 @@ Var
   num_cities: BYTE;
   i: BYTE;
 
-Procedure InitCities(num_cities: BYTE);
+Function CityExists(x, y: BYTE): BOOLEAN;
 
 Var 
   i: BYTE;
 Begin
+  CityExists := false;
+  For i := 0 To MAX_CITIES - 1 Do
+    Begin
+      If city_x[i] = 255 Then break;
+      If (city_x[i] = x) And (city_y[i] = y) Then
+        Begin
+          CityExists := true;
+          exit;
+        End;
+    End;
+End;
+
+Procedure InitCities(num_cities: BYTE);
+
+Var 
+  i: BYTE;
+  maybe_x, maybe_y: BYTE;
+Begin
   For i := 0 To num_cities - 1 Do
     Begin
-      city_x[i] := Random(SCREEN_WIDTH);
-      city_y[i] := Random(SCREEN_HEIGHT);
+
+      While True Do
+        Begin
+          maybe_x := Random(SCREEN_WIDTH)+2;
+          maybe_y := Random(SCREEN_HEIGHT)+2;
+          If Not CityExists(maybe_x, maybe_y) Then
+            Begin
+              city_x[i] := maybe_x;
+              city_y[i] := maybe_y;
+              break;
+            End;
+        End;
     End;
 End;
 
@@ -44,6 +72,7 @@ Begin
   num_cities := 3;
   InitCities(num_cities);
   InitGraph(0+16);
+
   CursorOff;
 
   DrawCities;
