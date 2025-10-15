@@ -54,6 +54,13 @@ Begin
     End;
 End;
 
+Procedure InitFixedCities();
+Begin
+  city_x[0] := 2; city_y[0] := 2;
+  city_x[1] := 14; city_y[1] := 8;
+  city_x[2] := 10; city_y[2] := 10;
+End;
+
 Procedure DrawCities();
 Begin
   For i := 0 To MAX_CITIES - 1 Do
@@ -70,7 +77,8 @@ Begin
 
   Randomize;
   num_cities := 3;
-  InitCities(num_cities);
+  //InitCities(num_cities);
+  InitFixedCities;
   InitGraph(0+16);
 
   CursorOff;
