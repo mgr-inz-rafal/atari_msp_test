@@ -46,6 +46,45 @@ Begin
     End;
 End;
 
+Procedure Swap(a, b: BYTE);
+
+Var 
+  temp: BYTE;
+Begin
+  temp := edge_dist[a];
+  edge_dist[a] := edge_dist[b];
+  edge_dist[b] := temp;
+
+  temp := edge_1[a];
+  edge_1[a] := edge_1[b];
+  edge_1[b] := temp;
+
+  temp := edge_2[a];
+  edge_2[a] := edge_2[b];
+  edge_2[b] := temp;
+End;
+
+// Simple bubble sort.
+// Not many edges, so performance is not a concern. We optimize for size.
+Procedure SortEdges;
+
+Var 
+  i, j: BYTE;
+  temp: BYTE;
+Begin
+  For i := 0 To MAX_EDGES - 2 Do
+    Begin
+      For j := 0 To MAX_EDGES - 2 - i Do
+        Begin
+          If edge_dist[j+1] = 255 Then break;
+          If edge_dist[j] > edge_dist[j+1] Then
+            Begin
+              Swap(j, j+1);
+            End;
+        End;
+    End;
+End;
+
 Procedure Debug_DumpEdges;
 
 Var 
@@ -58,6 +97,7 @@ Begin
       WriteLn('Edge from ', edge_1[i]:2, ' to ', edge_2[i]:2, ' distance ', edge_dist[i]:3);
       Inc(i);
     End;
+    WriteLn('----');
 End;
 
 Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
@@ -66,6 +106,9 @@ Begin
   CalculateEdges(xx, yy, count);
 
   Debug_DumpEdges;
+  SortEdges;
+  Debug_DumpEdges;
+
 End;
 
 End.
