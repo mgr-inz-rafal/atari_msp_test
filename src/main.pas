@@ -1,5 +1,5 @@
 
-Uses Graph, Crt;
+Uses Graph, Crt, Mst;
 
 Program Main;
 
@@ -56,9 +56,12 @@ End;
 
 Procedure InitFixedCities();
 Begin
-  city_x[0] := 2; city_y[0] := 2;
-  city_x[1] := 14; city_y[1] := 8;
-  city_x[2] := 10; city_y[2] := 10;
+  city_x[0] := 2;
+  city_y[0] := 2;
+  city_x[1] := 14;
+  city_y[1] := 8;
+  city_x[2] := 10;
+  city_y[2] := 10;
 End;
 
 Procedure DrawCities();
@@ -82,6 +85,8 @@ Begin
   InitGraph(0+16);
 
   CursorOff;
+
+  Compute(@city_x, @city_y, num_cities);
 
   DrawCities;
 
