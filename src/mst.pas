@@ -68,7 +68,7 @@ Begin
   edge_2[b] := temp;
 End;
 
-Procedure InitUnionFind;
+Procedure UnionFind_Init;
 
 Var i: BYTE;
 Begin
@@ -78,6 +78,15 @@ Begin
       rank[i] := 0;
     End;
   components := num_vertices + 1;
+End;
+
+Function UnionFind_Find(i: BYTE): BYTE;
+Begin
+  If parent[i] <> i Then
+    Begin
+      parent[i] := UnionFind_Find(parent[i]);
+    End;
+  UnionFind_Find := parent[i];
 End;
 
 // Simple bubble sort.
@@ -125,11 +134,13 @@ Begin
     Begin
       WriteLn('Edge ', i:2, ' parent ', parent[i]:2, ' rank ', rank[i]:2);
     End;
-    WriteLn('Components ', components:2);
-    WriteLn('----');
+  WriteLn('Components ', components:2);
+  WriteLn('----');
 End;
 
 Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
+
+Var f: BYTE;
 Begin
   Clear;
   num_vertices := count-1;
@@ -139,8 +150,15 @@ Begin
   SortEdges;
   Debug_DumpEdges;
 
-  InitUnionFind;
+  UnionFind_Init;
   Debug_UnionFind;
+
+  f := UnionFind_Find(0);
+  WriteLn('Found ', f:2);
+  f := UnionFind_Find(1);
+  WriteLn('Found ', f:2);
+  f := UnionFind_Find(2);
+  WriteLn('Found ', f:2);
 
 End;
 
