@@ -96,10 +96,10 @@ Begin
   FillChar(city_y, MAX_CITIES * SizeOf(BYTE), 255);
 
   Randomize;
-  //num_cities := Random(7)+2;
-  //InitCities(num_cities);
-  num_cities := 8;
-  InitFixedCities;
+  num_cities := Random(7)+2;
+  InitCities(num_cities);
+  // num_cities := 8;
+  // InitFixedCities;
   InitGraph(0+16);
 
   CursorOff;

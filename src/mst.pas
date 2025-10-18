@@ -13,7 +13,7 @@ Uses Math, Crt;
 
 Const 
   MAX_VERTICES = 10;
-  MAX_EDGES = 50;
+  MAX_EDGES = (MAX_VERTICES * (MAX_VERTICES - 1)) Div 2;
   SENTINEL = 255;
 
 Var 
@@ -21,8 +21,8 @@ Var
   edge_1 : array[0..MAX_EDGES-1] Of BYTE;
   edge_2 : array[0..MAX_EDGES-1] Of BYTE;
   edge_dist : array[0..MAX_EDGES-1] Of BYTE;
-  parent: array[0..MAX_EDGES-1] Of BYTE;
-  rank: array[0..MAX_EDGES-1] Of BYTE;
+  parent: array[0..MAX_VERTICES-1] Of BYTE;
+  rank: array[0..MAX_VERTICES-1] Of BYTE;
   resolved: array[0..MAX_EDGES-1] Of BYTE;
   components: BYTE;
 
