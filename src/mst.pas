@@ -11,9 +11,13 @@ Const
   MAX_EDGES = 20;
 
 Var 
+  num_vertices: BYTE;
   edge_1 : array[0..MAX_EDGES-1] Of BYTE;
   edge_2 : array[0..MAX_EDGES-1] Of BYTE;
   edge_dist : array[0..MAX_EDGES-1] Of BYTE;
+  parent: array[0..MAX_EDGES-1] Of BYTE;
+  rank: array[0..MAX_EDGES-1] Of BYTE;
+  components: BYTE;
 
 Procedure Clear;
 Begin
@@ -22,7 +26,7 @@ Begin
   FillChar(edge_dist, MAX_EDGES * SizeOf(BYTE), 255);
 End;
 
-Procedure CalculateEdges(xx: PByte; yy: PByte; count: BYTE);
+Procedure CalculateEdges(xx: PByte; yy: PByte);
 
 Var 
   i, j, k: BYTE;
@@ -30,9 +34,9 @@ Var
   dist: BYTE;
 Begin
   k := 0;
-  For i:=0 To count-1 Do
+  For i:=0 To num_vertices Do
     Begin
-      For j:=i+1 To count-1 Do
+      For j:=i+1 To num_vertices Do
         Begin
           xdiff := Abs(xx[i] - xx[j]);
           ydiff := Abs(yy[i] - yy[j]);
@@ -62,6 +66,18 @@ Begin
   temp := edge_2[a];
   edge_2[a] := edge_2[b];
   edge_2[b] := temp;
+End;
+
+Procedure InitUnionFind;
+
+Var i: BYTE;
+Begin
+  For i := 0 To num_vertices Do
+    Begin
+      parent[i] := i;
+      rank[i] := 0;
+    End;
+  components := num_vertices + 1;
 End;
 
 // Simple bubble sort.
@@ -97,17 +113,34 @@ Begin
       WriteLn('Edge from ', edge_1[i]:2, ' to ', edge_2[i]:2, ' distance ', edge_dist[i]:3);
       Inc(i);
     End;
+  WriteLn('----');
+End;
+
+Procedure Debug_UnionFind;
+
+Var 
+  i: BYTE;
+Begin
+  For i := 0 To num_vertices Do
+    Begin
+      WriteLn('Edge ', i:2, ' parent ', parent[i]:2, ' rank ', rank[i]:2);
+    End;
+    WriteLn('Components ', components:2);
     WriteLn('----');
 End;
 
 Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
 Begin
   Clear;
-  CalculateEdges(xx, yy, count);
+  num_vertices := count-1;
+  CalculateEdges(xx, yy);
 
   Debug_DumpEdges;
   SortEdges;
   Debug_DumpEdges;
+
+  InitUnionFind;
+  Debug_UnionFind;
 
 End;
 
