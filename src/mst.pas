@@ -8,7 +8,8 @@ Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
 Implementation
 
 Const 
-  MAX_EDGES = 20;
+  MAX_EDGES = 10;
+  SENTINEL = 255;
 
 Var 
   num_vertices: BYTE;
@@ -17,13 +18,14 @@ Var
   edge_dist : array[0..MAX_EDGES-1] Of BYTE;
   parent: array[0..MAX_EDGES-1] Of BYTE;
   rank: array[0..MAX_EDGES-1] Of BYTE;
+  resolved: array[0..MAX_EDGES-1] Of BYTE;
   components: BYTE;
 
 Procedure Clear;
 Begin
-  FillChar(edge_1, MAX_EDGES * SizeOf(BYTE), 255);
-  FillChar(edge_2, MAX_EDGES * SizeOf(BYTE), 255);
-  FillChar(edge_dist, MAX_EDGES * SizeOf(BYTE), 255);
+  FillChar(edge_1, MAX_EDGES * SizeOf(BYTE), SENTINEL);
+  FillChar(edge_2, MAX_EDGES * SizeOf(BYTE), SENTINEL);
+  FillChar(edge_dist, MAX_EDGES * SizeOf(BYTE), SENTINEL);
 End;
 
 Procedure CalculateEdges(xx: PByte; yy: PByte);
@@ -78,6 +80,12 @@ Begin
       rank[i] := 0;
     End;
   components := num_vertices + 1;
+  FillChar(resolved, MAX_EDGES * SizeOf(BYTE), SENTINEL);
+End;
+
+Function UnionFind_IsResolved: BOOLEAN;
+Begin
+  UnionFind_IsResolved := components = 1;
 End;
 
 Function UnionFind_Find(a: BYTE): BYTE;
@@ -111,6 +119,30 @@ Begin
     End;
 End;
 
+Procedure UnionFind_Resolve;
+
+Var 
+  i, j: BYTE;
+  id1, id2: BYTE;
+Begin
+  i := 0;
+  j := 0;
+  While True Do
+    Begin
+      If edge_1[i] = SENTINEL Then break;
+      id1 := edge_1[i];
+      id2 := edge_2[i];
+      If UnionFind_Find(id1) <> UnionFind_Find(id2) Then
+        Begin
+          UnionFind_Union(id1, id2);
+          resolved[j] := i;
+          Inc(j);
+          If UnionFind_IsResolved Then break;
+        End;
+      Inc(i);
+    End;
+End;
+
 // Simple bubble sort.
 // Not many edges, so performance is not a concern. We optimize for size.
 Procedure SortEdges;
@@ -123,7 +155,7 @@ Begin
     Begin
       For j := 0 To MAX_EDGES - 2 - i Do
         Begin
-          If edge_dist[j+1] = 255 Then break;
+          If edge_dist[j+1] = SENTINEL Then break;
           If edge_dist[j] > edge_dist[j+1] Then
             Begin
               Swap(j, j+1);
@@ -140,7 +172,7 @@ Begin
   i := 0;
   While True Do
     Begin
-      If edge_1[i] = 255 Then break;
+      If edge_1[i] = SENTINEL Then break;
       WriteLn('Edge from ', edge_1[i]:2, ' to ', edge_2[i]:2, ' distance ', edge_dist[i]:3);
       Inc(i);
     End;
@@ -168,31 +200,16 @@ Begin
   num_vertices := count-1;
   CalculateEdges(xx, yy);
 
-  Debug_DumpEdges;
   SortEdges;
-  Debug_DumpEdges;
-
   UnionFind_Init;
-  Debug_UnionFind;
+  UnionFind_Resolve;
 
-  f := UnionFind_Find(0);
-  WriteLn('Found ', f:2);
-  f := UnionFind_Find(1);
-  WriteLn('Found ', f:2);
-  f := UnionFind_Find(2);
-  WriteLn('Found ', f:2);
-  WriteLn('----');
-
-  UnionFind_Union(0, 1);
-
-  f := UnionFind_Find(0);
-  WriteLn('Found ', f:2);
-  f := UnionFind_Find(1);
-  WriteLn('Found ', f:2);
-  f := UnionFind_Find(2);
-  WriteLn('Found ', f:2);
-  WriteLn('----');
-
+  f := 0;
+  While True Do
+    Begin
+      If resolved[f] = SENTINEL Then break;
+      Inc(f);
+    End;
 End;
 
 End.
