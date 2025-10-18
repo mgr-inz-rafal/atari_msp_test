@@ -7,6 +7,10 @@ Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
 
 Implementation
 
+// TODO: Crt not here
+
+Uses Math, Crt;
+
 Const 
   MAX_EDGES = 10;
   SENTINEL = 255;
@@ -194,7 +198,10 @@ End;
 
 Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
 
-Var f: BYTE;
+Var 
+  f, rf: BYTE;
+  i, j: BYTE;
+  x1, y1, x2, y2, mx, my: BYTE;
 Begin
   Clear;
   num_vertices := count-1;
@@ -207,7 +214,38 @@ Begin
   f := 0;
   While True Do
     Begin
-      If resolved[f] = SENTINEL Then break;
+      rf := resolved[f];
+      If rf = SENTINEL Then break;
+
+      x1 := xx[edge_1[rf]];
+      y1 := yy[edge_1[rf]];
+      x2 := xx[edge_2[rf]];
+      y2 := yy[edge_2[rf]];
+
+      // TODO: Aliases not needed?
+      mx := x2;
+      my := y1;
+
+      i := min(x1, mx);
+      j := max(x1, mx);
+      While True Do
+        Begin
+          GotoXY(i, y1);
+          Write('-');
+          If i = j Then break;
+          Inc(i);
+        End;
+
+      i := min(y2, my);
+      j := max(y2, my);
+      While True Do
+        Begin
+          GotoXY(x2, i);
+          Write('|');
+          If i = j Then break;
+          Inc(i);
+        End;
+
       Inc(f);
     End;
 End;
