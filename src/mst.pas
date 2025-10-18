@@ -80,13 +80,35 @@ Begin
   components := num_vertices + 1;
 End;
 
-Function UnionFind_Find(i: BYTE): BYTE;
+Function UnionFind_Find(a: BYTE): BYTE;
 Begin
-  If parent[i] <> i Then
+  If parent[a] <> a Then
     Begin
-      parent[i] := UnionFind_Find(parent[i]);
+      parent[a] := UnionFind_Find(parent[a]);
     End;
-  UnionFind_Find := parent[i];
+  UnionFind_Find := parent[a];
+End;
+
+Procedure UnionFind_Union(a, b: BYTE);
+
+Var 
+  root_a, root_b: BYTE;
+Begin
+  root_a := UnionFind_Find(a);
+  root_b := UnionFind_Find(b);
+
+  If root_a = root_b Then Exit;
+  Dec(components);
+  If rank[root_a] > rank[root_b] Then
+    parent[root_b] := root_a
+  Else
+    If rank[root_a] < rank[root_b] Then
+      parent[root_a] := root_b
+  Else
+    Begin
+      parent[root_b] := root_a;
+      Inc(rank[root_a]);
+    End;
 End;
 
 // Simple bubble sort.
@@ -159,6 +181,17 @@ Begin
   WriteLn('Found ', f:2);
   f := UnionFind_Find(2);
   WriteLn('Found ', f:2);
+  WriteLn('----');
+
+  UnionFind_Union(0, 1);
+
+  f := UnionFind_Find(0);
+  WriteLn('Found ', f:2);
+  f := UnionFind_Find(1);
+  WriteLn('Found ', f:2);
+  f := UnionFind_Find(2);
+  WriteLn('Found ', f:2);
+  WriteLn('----');
 
 End;
 
