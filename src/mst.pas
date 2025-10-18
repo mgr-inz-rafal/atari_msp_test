@@ -12,7 +12,8 @@ Implementation
 Uses Math, Crt;
 
 Const 
-  MAX_EDGES = 10;
+  MAX_VERTICES = 10;
+  MAX_EDGES = 50;
   SENTINEL = 255;
 
 Var 
