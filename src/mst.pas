@@ -202,7 +202,7 @@ Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
 Var 
   f, rf: BYTE;
   i, j: BYTE;
-  x1, y1, x2, y2, mx, my: BYTE;
+  x1, y1, x2, y2: BYTE;
 Begin
   Clear;
   num_vertices := count-1;
@@ -223,12 +223,8 @@ Begin
       x2 := xx[edge_2[rf]];
       y2 := yy[edge_2[rf]];
 
-      // TODO: Aliases not needed?
-      mx := x2;
-      my := y1;
-
-      i := min(x1, mx);
-      j := max(x1, mx);
+      i := min(x1, x2);
+      j := max(x1, x2);
       While True Do
         Begin
           GotoXY(i, y1);
@@ -237,8 +233,8 @@ Begin
           Inc(i);
         End;
 
-      i := min(y2, my);
-      j := max(y2, my);
+      i := min(y2, y1);
+      j := max(y2, y1);
       While True Do
         Begin
           GotoXY(x2, i);
