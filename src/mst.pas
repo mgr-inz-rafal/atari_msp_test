@@ -223,24 +223,16 @@ Begin
       x2 := xx[edge_2[rf]];
       y2 := yy[edge_2[rf]];
 
-      i := min(x1, x2);
-      j := max(x1, x2);
-      While True Do
+      For i := min(x1, x2) To max(x1, x2) Do
         Begin
           GotoXY(i, y1);
           Write('-');
-          If i = j Then break;
-          Inc(i);
         End;
 
-      i := min(y2, y1);
-      j := max(y2, y1);
-      While True Do
+      For i := min(y2, y1) To max(y2, y1) Do
         Begin
           GotoXY(x2, i);
           Write('|');
-          If i = j Then break;
-          Inc(i);
         End;
 
       Inc(f);
