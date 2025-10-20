@@ -7,12 +7,15 @@ Const
   MAX_CITIES = 10;
   SCREEN_WIDTH = 38;
   SCREEN_HEIGHT = 22;
+  ROADS_MAX = 10;
 
 Var 
   city_x: array[0..MAX_CITIES-1] Of BYTE;
   city_y: array[0..MAX_CITIES-1] Of BYTE;
   num_cities: BYTE;
   i: BYTE;
+  roads_count: BYTE;
+  roads: Array[0..ROADS_MAX * SizeOf(TEdge)] Of Byte;
 
 Function CityExists(x, y: BYTE): BOOLEAN;
 
@@ -56,32 +59,50 @@ End;
 
 Procedure InitFixedCities();
 Begin
-  city_x[0] := 37;
-  city_y[0] := 6;
+  city_x[0] := 2;
+  city_y[0] := 2;
 
-  city_x[1] := 26;
-  city_y[1] := 22;
+  city_x[1] := 14;
+  city_y[1] := 8;
 
-  city_x[2] := 13;
-  city_y[2] := 20;
+  city_x[2] := 10;
+  city_y[2] := 10;
 
-  city_x[3] := 4;
-  city_y[3] := 16;
+  // city_x[3] := 4;
+  // city_y[3] := 16;
 
-  city_x[4] := 5;
-  city_y[4] := 15;
+  // city_x[4] := 5;
+  // city_y[4] := 15;
 
-  city_x[5] := 3;
-  city_y[5] := 17;
+  // city_x[5] := 3;
+  // city_y[5] := 17;
 
-  city_x[6] := 18;
-  city_y[6] := 3;
+  // city_x[6] := 18;
+  // city_y[6] := 3;
 
-  city_x[7] := 4;
-  city_y[7] := 4;
+  // city_x[7] := 4;
+  // city_y[7] := 4;
 End;
 
-Procedure DrawCities();
+Procedure DrawRoads(count: BYTE);
+
+Var 
+  roads_ptr: ^TEdge;
+  i, j: BYTE;
+Begin
+  roads_ptr := pointer(@roads);
+  For i := 0 To count - 1 Do
+    Begin
+      For j := roads_ptr.span_start To roads_ptr.span_end Do
+        Begin
+          GotoXY(j, roads_ptr.fixed);
+          Write('-');
+        End;
+      Inc(roads_ptr);
+    End;
+End;
+
+Procedure DrawCities;
 Begin
   For i := 0 To MAX_CITIES - 1 Do
     Begin
@@ -96,17 +117,17 @@ Begin
   FillChar(city_y, MAX_CITIES * SizeOf(BYTE), 255);
 
   Randomize;
-  num_cities := Random(7)+2;
-  InitCities(num_cities);
-  // num_cities := 8;
-  // InitFixedCities;
+  // num_cities := Random(7)+2;
+  // InitCities(num_cities);
+  num_cities := 3;
+  InitFixedCities;
   InitGraph(0+16);
 
   CursorOff;
 
-  Compute(@city_x, @city_y, num_cities);
-
+  roads_count := Compute(@city_x, @city_y, num_cities, @roads[0]);
   DrawCities;
+  DrawRoads(roads_count);
 
   Repeat
   Until KeyPressed;

@@ -3,7 +3,17 @@ Unit Mst;
 
 Interface
 
-Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
+Type 
+  TEdge = Record
+    // Oldest bit = horizontal/vertical
+    fixed: BYTE;
+    span_start: BYTE;
+    span_end: BYTE;
+  End;
+  PEdge = ^TEdge;
+
+
+Function Compute(xx: PByte; yy: PByte; count: BYTE; horizontal_edges: PByte): Byte;
 
 Implementation
 
@@ -197,12 +207,15 @@ Begin
   WriteLn('----');
 End;
 
-Procedure Compute(xx: PByte; yy: PByte; count: BYTE);
+Function Compute(xx: PByte; yy: PByte; count: BYTE; horizontal_edges: PByte): Byte;
 
 Var 
   f, rf: BYTE;
   i, j: BYTE;
   x1, y1, x2, y2: BYTE;
+  mi, ma: BYTE;
+  h_span_ptr: ^TEdge;
+  h_span_count: BYTE;
 Begin
   Clear;
   num_vertices := count-1;
@@ -213,6 +226,8 @@ Begin
   UnionFind_Resolve;
 
   f := 0;
+  h_span_ptr := pointer(horizontal_edges);
+  h_span_count := 0;
   While True Do
     Begin
       rf := resolved[f];
@@ -223,20 +238,29 @@ Begin
       x2 := xx[edge_2[rf]];
       y2 := yy[edge_2[rf]];
 
-      For i := min(x1, x2) To max(x1, x2) Do
+      mi := min(x1, x2);
+      ma := max(x1, x2);
+      If mi <> ma Then
         Begin
-          GotoXY(i, y1);
-          Write('-');
+          h_span_ptr.span_start := mi;
+          h_span_ptr.span_end := ma;
+          h_span_ptr.fixed := y1;
+          Inc(h_span_count);
+          Inc(h_span_ptr);
         End;
 
-      For i := min(y2, y1) To max(y2, y1) Do
-        Begin
-          GotoXY(x2, i);
-          Write('|');
-        End;
+      // mi := min(y2, y1);
+      // ma := max(y2, y1);
+      // For i := mi To ma Do
+      // Begin
+      // GotoXY(x2, i);
+      // Write('|');
+      // End;
 
       Inc(f);
     End;
+
+  Compute := h_span_count;
 End;
 
 End.
