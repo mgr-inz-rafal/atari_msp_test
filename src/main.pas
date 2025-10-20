@@ -88,6 +88,7 @@ Procedure DrawRoads(count: BYTE);
 
 Var 
   roads_ptr: ^TEdge;
+  is_horizontal: BOOLEAN;
   i, j: BYTE;
 Begin
   roads_ptr := pointer(@roads);
@@ -95,8 +96,12 @@ Begin
     Begin
       For j := roads_ptr.span_start To roads_ptr.span_end Do
         Begin
-          GotoXY(j, roads_ptr.fixed);
-          Write('-');
+          is_horizontal := (roads_ptr.fixed And %10000000) = %10000000;
+          If is_horizontal Then
+            Begin
+              GotoXY(j, roads_ptr.fixed And %01111111);
+              Write('-');
+            End;
         End;
       Inc(roads_ptr);
     End;
@@ -126,8 +131,8 @@ Begin
   CursorOff;
 
   roads_count := Compute(@city_x, @city_y, num_cities, @roads[0]);
-  DrawCities;
   DrawRoads(roads_count);
+  DrawCities;
 
   Repeat
   Until KeyPressed;

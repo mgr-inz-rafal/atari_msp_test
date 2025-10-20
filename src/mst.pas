@@ -5,7 +5,7 @@ Interface
 
 Type 
   TEdge = Record
-    // Oldest bit = horizontal/vertical
+    // Oldest bit = 1 if horizontal span, 0 if vertical span
     fixed: BYTE;
     span_start: BYTE;
     span_end: BYTE;
@@ -245,6 +245,7 @@ Begin
           h_span_ptr.span_start := mi;
           h_span_ptr.span_end := ma;
           h_span_ptr.fixed := y1;
+          h_span_ptr.fixed := h_span_ptr.fixed Or %10000000;
           Inc(h_span_count);
           Inc(h_span_ptr);
         End;
