@@ -211,7 +211,6 @@ Function Compute(xx: PByte; yy: PByte; count: BYTE; horizontal_edges: PByte): By
 
 Var 
   f, rf: BYTE;
-  i, j: BYTE;
   x1, y1, x2, y2: BYTE;
   mi, ma: BYTE;
   h_span_ptr: ^TEdge;
@@ -250,13 +249,17 @@ Begin
           Inc(h_span_ptr);
         End;
 
-      // mi := min(y2, y1);
-      // ma := max(y2, y1);
-      // For i := mi To ma Do
-      // Begin
-      // GotoXY(x2, i);
-      // Write('|');
-      // End;
+      mi := min(y2, y1);
+      ma := max(y2, y1);
+      If mi <> ma Then
+        Begin
+          h_span_ptr.span_start := mi;
+          h_span_ptr.span_end := ma;
+          h_span_ptr.fixed := x2;
+          h_span_ptr.fixed := h_span_ptr.fixed And %01111111;
+          Inc(h_span_count);
+          Inc(h_span_ptr);
+        End;
 
       Inc(f);
     End;

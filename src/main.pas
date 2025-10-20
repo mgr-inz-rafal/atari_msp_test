@@ -101,6 +101,11 @@ Begin
             Begin
               GotoXY(j, roads_ptr.fixed And %01111111);
               Write('-');
+            End
+          Else
+            Begin
+              GotoXY(roads_ptr.fixed, j);
+              Write('|');
             End;
         End;
       Inc(roads_ptr);
